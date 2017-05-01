@@ -44,7 +44,7 @@ Switch to read log messages as text
 .EXAMPLE
 
 # Read top 10 log messages containing "Invoice" from test cluster in text format
-PS> Read-PipLog -Name "test" -Filter @{ Search="Invoice" } -Take 10 -AsText
+PS> Read-PipLog -Name "test" -Filter @{ search="Invoice" } -Take 10 -AsText
 
 #>
     [CmdletBinding()]
@@ -212,14 +212,14 @@ A name to refer to the client facade
 A message with the following structure
 - time: Date
 - source: string
-- evel: LogLevel - (0: None, 1: Fatal, 2: Error, 3: Warn, 4: Info, 5: Debug, 6: Trace)
+- level: LogLevel - (0: None, 1: Fatal, 2: Error, 3: Warn, 4: Info, 5: Debug, 6: Trace)
 - correlation_id: string
 - error: ErrorDescription
 - message: string
 
 .EXAMPLE
 
-# Write trace to test cluster
+# Write log message to test cluster
 PS> Write-PipLog -Name "test" -Message @{ correlation_id="123"; level=2; source="Powershell" error=@{ message="Failed" }; message="Just a test" }
 
 #>
@@ -281,7 +281,7 @@ PS> Clear-PipLog -Name "test"
     {
         $route = "/api/1.0/logging"
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method "Delete" -Route $route
+        $null = Invoke-PipFacade -Connection $Connection -Name $Name -Method "Delete" -Route $route
     }
     end {}
 }

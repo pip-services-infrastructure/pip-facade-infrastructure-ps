@@ -10,6 +10,7 @@ $path = $PSScriptRoot
 if ($path -eq "") { $path = "." }
 
 . "$($path)/src/clients/Logging.ps1"
+. "$($path)/src/clients/Counters.ps1"
 . "$($path)/src/clients/Registry.ps1"
 . "$($path)/src/clients/Statistics.ps1"
 . "$($path)/src/clients/EventLog.ps1"
