@@ -171,11 +171,11 @@ function Read-PipStatCounter
 <#
 .SYNOPSIS
 
-Gets set of counter values for specified time range
+Gets set of counters values for specified time range
 
 .DESCRIPTION
 
-Gets value set for a counter at specified time horizon from/to time range
+Gets value set for a counter or group of counterts at specified time horizon from/to time range
 
 .PARAMETER Connection
 
@@ -229,8 +229,8 @@ PS> Read-PipStatCounter -Name "test" -Group test -Counter calls -Type "Hour" -Fr
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Get",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Uri = "/api/1.0/statistics/{0}/{1}",
-        [Parameter(Mandatory=$false, Position = 0, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/statistics/{0}",
+        [Parameter(Mandatory=$true, Position = 0, ValueFromPipelineByPropertyName=$true)]
         [string] $Group,
         [Parameter(Mandatory=$false, Position = 1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [string] $Counter,
@@ -245,7 +245,11 @@ PS> Read-PipStatCounter -Name "test" -Group test -Counter calls -Type "Hour" -Fr
     begin {}
     process 
     {
-        $route = $Uri -f $Group, $Counter
+        $route = $Uri -f $Group
+        if ($Counter -ne $null -and $Counter -ne '') {
+            $route += "/" + $Counter
+        }
+
         $params = @{
             type = $Type
             from_time = $From
