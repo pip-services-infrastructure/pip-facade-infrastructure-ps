@@ -25,6 +25,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Get')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/counters)
+
 .PARAMETER Filter
 
 A filter with search criteria (default: no filter)
@@ -36,6 +44,10 @@ A number of records to skip (default: 0)
 .PARAMETER Take
 
 A number of records to return (default: 100)
+
+.PARAMETER Total
+
+A include total count (default: false)
 
 .PARAMETER AsText
 
@@ -54,6 +66,10 @@ PS> Read-PipCounters -Name "test" -Filter @{ search="Invoice" } -Take 10 -AsText
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Get",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/counters",
         [Parameter(Mandatory=$false, Position = 0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Filter = @{},
         [Parameter(Mandatory=$false, Position = 1, ValueFromPipelineByPropertyName=$true)]
@@ -68,7 +84,7 @@ PS> Read-PipCounters -Name "test" -Filter @{ search="Invoice" } -Take 10 -AsText
     begin {}
     process 
     {
-        $route = "/api/1.0/counters"
+        $route = $Uri
 
         $params = $Filter +
         @{ 
@@ -81,14 +97,14 @@ PS> Read-PipCounters -Name "test" -Filter @{ search="Invoice" } -Take 10 -AsText
         {
             $route += "/text"
 
-            $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method "Get" -Route $route -Params $params -RawResult $true
+            $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params -RawResult $true
 
             $result = $result -split "\r\n"
             Write-Output $result
         }
         else 
         {
-            $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method "Get" -Route $route -Params $params
+            $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
 
             Write-Output $result.Data
         }
@@ -116,6 +132,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Post')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/counters)
+
 .PARAMETER Counter
 
 A counter object with the following structure
@@ -142,14 +166,18 @@ PS> Write-PipCount -Name "test" -Counter @{ name="test.total_calls"; type=4; cou
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
-        [Object] $Counter
+        [Object] $Counter,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Post",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/counters"
     )
     begin {}
     process 
     {
-        $route = "/api/1.0/counters"
+        $route = $Uri
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method "Post" -Route $route -Request $Counter
+        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Request $Counter
     }
     end {}
 }
@@ -174,6 +202,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Delete')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/counters)
+
 .EXAMPLE
 
 # Clear coutners on test cluster
@@ -186,14 +222,18 @@ PS> Clear-PipCounters -Name "test"
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name
+        [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Delete",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/counters"
     )
     begin {}
     process 
     {
-        $route = "/api/1.0/counters"
+        $route = $Uri
 
-        $null = Invoke-PipFacade -Connection $Connection -Name $Name -Method "Delete" -Route $route
+        $null = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route
     }
     end {}
 }

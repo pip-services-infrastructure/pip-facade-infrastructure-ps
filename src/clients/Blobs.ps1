@@ -25,6 +25,15 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Get')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/blobs)
+
+
 .PARAMETER Filter
 
 A filter with search criteria (default: no filter)
@@ -36,6 +45,10 @@ A number of records to skip (default: 0)
 .PARAMETER Take
 
 A number of records to return (default: 100)
+
+.PARAMETER Total
+
+A include total count (default: false)
 
 .EXAMPLE
 
@@ -50,6 +63,10 @@ PS> Get-PipBlobs -Name "test"
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Get",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/blobs",
         [Parameter(Mandatory=$false, Position = 0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Filter = @{},
         [Parameter(Mandatory=$false, Position = 1, ValueFromPipelineByPropertyName=$true)]
@@ -60,7 +77,7 @@ PS> Get-PipBlobs -Name "test"
     begin {}
     process 
     {
-        $route = "/api/1.0/blobs"
+        $route = $Uri
         $params = 
         @{ 
             filter = ConvertFilterParamsToString($Filter); 
@@ -68,7 +85,7 @@ PS> Get-PipBlobs -Name "test"
             take = $Take
         }
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method "Get" -Route $route -Params $params
+        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
 
         Write-Output $result.Data
     }
@@ -95,6 +112,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Get')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/blobs/{0})
+
 .PARAMETER Id
 
 A blob id
@@ -112,15 +137,19 @@ PS> Get-PipBlob -Name "test" -Id 123
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Put",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/blobs/{0}/info",
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [string] $Id = @{}
     )
     begin {}
     process 
     {
-        $route = "/api/1.0/blobs/$Id/info"
+        $route = $Uri -f $Id
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method "Get" -Route $route
+        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route
 
         Write-Output $result
     }
@@ -146,6 +175,14 @@ A connection object
 .PARAMETER Name
 
 A name to refer to the client facade
+
+.PARAMETER Method
+
+An operation method (default: 'Put')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/blobs/{0}/info)
 
 .PARAMETER Id
 
@@ -180,6 +217,10 @@ PS> Update-PipBlob -Id 234 -Group test -Completed $false
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Put",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/blobs/{0}/info",
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [string] $Id,
         [Parameter(Mandatory=$false, Position = 1, ValueFromPipelineByPropertyName=$true)]
@@ -201,9 +242,9 @@ PS> Update-PipBlob -Id 234 -Group test -Completed $false
         if ($Completed -ne $null) { $info.completed = $Completed }
         if ($Expire -ne $null) { $info.expire_time = $Expire }
 
-        $route = "/api/1.0/blobs/$Id/info"
+        $route = $Uri -f $Id
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method "Put" -Route $route -Request $info
+        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Request $info
     }
     end {}
 }
@@ -228,6 +269,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Get')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/blobs/{0})
+
 .PARAMETER Id
 
 A blob id
@@ -249,6 +298,10 @@ PS> Read-PipBlob -Name "test" -Id "123" -OutFile temp123.dat
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Put",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/blobs/{0}",
         [Parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [string] $Id,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -271,7 +324,7 @@ PS> Read-PipBlob -Name "test" -Id "123" -OutFile temp123.dat
         }
 
         ## Construct URI with parameters
-        $route = "/api/1.0/blobs/$Id"
+        $route = $Uri -f $Id
         $uri = $Connection.Protocol + "://" + $Connection.Host + ":" + $Connection.Port + $Route;
 
         Invoke-WebRequest -Uri $uri -OutFile $OutFile -UseBasicParsing
@@ -298,6 +351,14 @@ A connection object
 .PARAMETER Name
 
 A name to refer to the client facade
+
+.PARAMETER Method
+
+An operation method (default: 'Post')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/blobs)
 
 .PARAMETER Group
 
@@ -328,6 +389,10 @@ PS> Write-PipBlob -Group test -InFile photo.jpg
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Post",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/blobs",
         [Parameter(Mandatory=$false, Position = 0, ValueFromPipelineByPropertyName=$true)]
         [string] $Group,
         [Parameter(Mandatory=$true, Position = 1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -340,14 +405,14 @@ PS> Write-PipBlob -Group test -InFile photo.jpg
     begin {}
     process 
     {
-        $route = "/api/1.0/blobs"
+        $route = $Uri
         $params = @{
             group = $Group
             completed = $Completed
             expire_time = $Expire
         }
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method "Post" -Route $route -InFile $InFile -Params $params
+        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -InFile $InFile -Params $params
     }
     end {}
 }
@@ -372,6 +437,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Delete')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/blobs/{0})
+
 .PARAMETER Id
 
 A blob id
@@ -389,15 +462,19 @@ PS> Remove-PipBlob -Name "test" -Id "123"
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Delete",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/blobs/{0}",
         [Parameter(Mandatory=$True, Position = 0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [string] $Id
     )
     begin {}
     process 
     {
-        $route = "/api/1.0/blobs/$Id"
+        $route = $Uri -f $Id
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method "Delete" -Route $route
+        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route
     }
     end {}
 }

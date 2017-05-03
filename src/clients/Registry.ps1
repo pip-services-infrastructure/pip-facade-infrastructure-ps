@@ -25,6 +25,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Get')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/registry/ids)
+
 .PARAMETER Filter
 
 A filter with search criteria (default: no filter)
@@ -36,6 +44,10 @@ A number of records to skip (default: 0)
 .PARAMETER Take
 
 A number of records to return (default: 100)
+
+.PARAMETER Total
+
+A include total count (default: false)
 
 .EXAMPLE
 
@@ -50,6 +62,10 @@ PS> Get-PipRegistrySections -Name "test"
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Get",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/registry/ids",
         [Parameter(Mandatory=$false, Position = 0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Filter = @{},
         [Parameter(Mandatory=$false, Position = 1, ValueFromPipelineByPropertyName=$true)]
@@ -60,14 +76,14 @@ PS> Get-PipRegistrySections -Name "test"
     begin {}
     process 
     {
-        $route = "/api/1.0/registry/ids"
+        $route = $Uri
         $params = $Filter +
         @{ 
             skip = $Skip;
             take = $Take
         }
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method "Get" -Route $route -Params $params
+        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
 
         Write-Output $result.Data
     }
@@ -94,6 +110,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Get')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/registry/{0})
+
 .PARAMETER Section
 
 A section id
@@ -111,15 +135,19 @@ PS> Read-PipRegistrySection -Name "test" -Section 123
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Get",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/registry/{0}",
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [string] $Section
     )
     begin {}
     process 
     {
-        $route = "/api/1.0/registry/$Section"
+        $route = $Uri -f $Section
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Route $route
+        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route
 
         $hash = ConvertObjectToHashtable($result)
         Write-Output $hash
@@ -147,6 +175,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Post')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/registry/{0})
+
 .PARAMETER Section
 
 A section id
@@ -168,6 +204,10 @@ PS> Write-PipRegistrySection -Name "test" -Section 123 -Parameters @{ key1=123; 
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Post",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/registry/{0}",
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipelineByPropertyName=$true)]
         [string] $Section,
         [Parameter(Mandatory=$true, Position = 1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -176,9 +216,9 @@ PS> Write-PipRegistrySection -Name "test" -Section 123 -Parameters @{ key1=123; 
     begin {}
     process 
     {
-        $route = "/api/1.0/registry/$Section"
+        $route = $Uri -f $Section
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method "Post" -Route $route -Request $Parameters
+        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Request $Parameters
     }
     end {}
 }
@@ -203,6 +243,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Get')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/registry/{0}/{1})
+
 .PARAMETER Section
 
 A section id
@@ -224,6 +272,10 @@ PS> Read-PipRegistryParam -Name "test" -Section 123 -Key "language"
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Get",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/registry/{0}/{1}",
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipelineByPropertyName=$true)]
         [string] $Section,
         [Parameter(Mandatory=$true, Position = 1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -232,9 +284,9 @@ PS> Read-PipRegistryParam -Name "test" -Section 123 -Key "language"
     begin {}
     process 
     {
-        $route = "/api/1.0/registry/$Section/$Key"
+        $route = $Uri -f $Section, $Key
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Route $route
+        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route
 
         Write-Output $result
     }
@@ -261,6 +313,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Post')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/registry/{0}/{1})
+
 .PARAMETER Section
 
 A section id
@@ -286,6 +346,10 @@ PS> Write-PipRegistryParam -Name "test" -Section 123 -Key language -Value en
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Post",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/registry/{0}/{1}",
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipelineByPropertyName=$true)]
         [string] $Section,
         [Parameter(Mandatory=$true, Position = 1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -296,12 +360,12 @@ PS> Write-PipRegistryParam -Name "test" -Section 123 -Key language -Value en
     begin {}
     process 
     {
-        $route = "/api/1.0/registry/$Section/$Key"
+        $route = $Uri -f $Section, $Key
         $params = @{
             value = $Value
         }
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method "Post" -Route $route -Params $params
+        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
     }
     end {}
 }
@@ -326,6 +390,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Post')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/registry/{0}/{1}/increment)
+
 .PARAMETER Section
 
 A section id
@@ -334,7 +406,7 @@ A section id
 
 A parameter key
 
-.PARAMETER Count
+.PARAMETER Value
 
 An increment count
 
@@ -351,22 +423,26 @@ PS> Add-PipRegistryParam -Name "test" -Section 123 -Key attempt -Count 1
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Post",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/registry/{0}/{1}/increment",
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipelineByPropertyName=$true)]
         [string] $Section,
         [Parameter(Mandatory=$true, Position = 1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [string] $Key,
         [Parameter(Mandatory=$true, Position = 2, ValueFromPipelineByPropertyName=$true)]
-        [object] $Count
+        [object] $Value
     )
     begin {}
     process 
     {
-        $route = "/api/1.0/registry/$Section/$Key/increment"
+        $route = $Uri -f $Section, $Key
         $params = @{
-            value = $Count
+            value = $Value
         }
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method "Post" -Route $route -Params $params
+        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
     }
     end {}
 }

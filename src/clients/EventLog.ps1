@@ -25,6 +25,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Get')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/eventlog)
+
 .PARAMETER Filter
 
 A filter with search criteria (default: no filter)
@@ -36,6 +44,10 @@ A number of records to skip (default: 0)
 .PARAMETER Take
 
 A number of records to return (default: 100)
+
+.PARAMETER Total
+
+A include total count (default: false)
 
 .EXAMPLE
 
@@ -50,6 +62,10 @@ PS> Get-PipEvents -Name "test" -Filter @{ type="Failure" }
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Get",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/eventlog",
         [Parameter(Mandatory=$false, Position = 0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Filter = @{},
         [Parameter(Mandatory=$false, Position = 1, ValueFromPipelineByPropertyName=$true)]
@@ -60,14 +76,14 @@ PS> Get-PipEvents -Name "test" -Filter @{ type="Failure" }
     begin {}
     process 
     {
-        $route = "/api/1.0/eventlog"
+        $route = $Uri
         $params = $Filter +
         @{ 
             skip = $Skip;
             take = $Take
         }
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method "Get" -Route $route -Params $params
+        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
 
         Write-Output $result.Data
     }
@@ -94,6 +110,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Post')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/eventlog)
+
 .PARAMETER Event
 
 An event to be written:
@@ -119,15 +143,19 @@ PS> Write-PipEvent -Name "test" -Event @{ correlation_id="123"; type="Other"; me
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, Position = 0, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Post",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/eventlog",
         [Parameter(Mandatory=$true, Position = 1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [Object] $Event
     )
     begin {}
     process 
     {
-        $route = "/api/1.0/eventlog"
+        $route = $Uri
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method "Post" -Route $route -Request $Event
+        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Request $Event
     }
     end {}
 }

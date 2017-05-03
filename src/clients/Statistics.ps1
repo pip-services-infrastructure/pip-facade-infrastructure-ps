@@ -25,6 +25,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Get')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/statistics/groups)
+
 .PARAMETER Skip
 
 A number of records to skip (default: 0)
@@ -32,6 +40,10 @@ A number of records to skip (default: 0)
 .PARAMETER Take
 
 A number of records to return (default: 100)
+
+.PARAMETER Total
+
+A include total count (default: false)
 
 .EXAMPLE
 
@@ -46,6 +58,10 @@ PS> Get-PipStatGroups -Name "test"
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Get",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/statistics/groups",
         [Parameter(Mandatory=$false, Position = 0, ValueFromPipelineByPropertyName=$true)]
         [int] $Skip = 0,
         [Parameter(Mandatory=$false, Position = 1, ValueFromPipelineByPropertyName=$true)]
@@ -54,14 +70,14 @@ PS> Get-PipStatGroups -Name "test"
     begin {}
     process 
     {
-        $route = "/api/1.0/statistics/groups"
+        $route = $Uri
         $params =
         @{ 
             skip = $Skip;
             take = $Take
         }
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method "Get" -Route $route -Params $params
+        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
 
         Write-Output $result.Data
     }
@@ -88,6 +104,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Post')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/statistics/counters)
+
 .PARAMETER Filter
 
 A filter with search criteria (default: no filter)
@@ -113,6 +137,10 @@ PS> Get-PipStatCounters -Name "test"
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Get",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/statistics/counters",
         [Parameter(Mandatory=$false, Position = 0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Filter = @{},
         [Parameter(Mandatory=$false, Position = 1, ValueFromPipelineByPropertyName=$true)]
@@ -123,14 +151,14 @@ PS> Get-PipStatCounters -Name "test"
     begin {}
     process 
     {
-        $route = "/api/1.0/statistics/counters"
+        $route = $Uri
         $params = $Filter +
         @{ 
             skip = $Skip;
             take = $Take
         }
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method "Get" -Route $route -Params $params
+        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
 
         Write-Output $result.Data
     }
@@ -156,6 +184,14 @@ A connection object
 .PARAMETER Name
 
 A name to refer to the client facade
+
+.PARAMETER Method
+
+An operation method (default: 'Get')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/statistics/{0}/{1})
 
 .PARAMETER Group
 
@@ -190,6 +226,10 @@ PS> Read-PipStatCounter -Name "test" -Group test -Counter calls -Type "Hour" -Fr
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, Position, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Get",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/statistics/{0}/{1}",
         [Parameter(Mandatory=$false, Position = 0, ValueFromPipelineByPropertyName=$true)]
         [string] $Group,
         [Parameter(Mandatory=$false, Position = 1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -205,14 +245,14 @@ PS> Read-PipStatCounter -Name "test" -Group test -Counter calls -Type "Hour" -Fr
     begin {}
     process 
     {
-        $route = "/api/1.0/statistics/$Group/$Counter"
+        $route = $Uri -f $Group, $Counter
         $params = @{
             type = $Type
             from_time = $From
             to_time = $To
         }
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method "Get" -Route $route -Params $params
+        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
 
         Write-Output $result
     }
@@ -239,6 +279,14 @@ A connection object
 
 A name to refer to the client facade
 
+.PARAMETER Method
+
+An operation method (default: 'Post')
+
+.PARAMETER Uri
+
+An operation uri (default: /api/1.0/statistics/{0}/{1})
+
 .PARAMETER Group
 
 A counter group
@@ -264,6 +312,10 @@ PS> Add-PipStatCounter -Name "test" -Group test -Counter calls -Value 1
         [Hashtable] $Connection,
         [Parameter(Mandatory=$false, Position, ValueFromPipelineByPropertyName=$true)]
         [string] $Name,
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Method = "Post",
+        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [string] $Uri = "/api/1.0/statistics/{0}/{1}",
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipelineByPropertyName=$true)]
         [string] $Group,
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -274,10 +326,10 @@ PS> Add-PipStatCounter -Name "test" -Group test -Counter calls -Value 1
     begin {}
     process 
     {
-        $route = "/api/1.0/statistics/$Group/$Counter"
+        $route = $Uri -f $Group, $Counter
         $params = @{ value = $Value }
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method "Post" -Route $route -Params $params
+        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
     }
     end {}
 }
