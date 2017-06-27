@@ -21,10 +21,6 @@ Gets a page of blocks headers
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Get')
@@ -52,8 +48,7 @@ A include total count (default: false)
 
 .EXAMPLE
 
-# Get all blobs from test server
-PS> Get-PipBlobs -Name "test"
+Get-PipBlobs
 
 #>
     [CmdletBinding()]
@@ -61,8 +56,6 @@ PS> Get-PipBlobs -Name "test"
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Get",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -85,7 +78,7 @@ PS> Get-PipBlobs -Name "test"
             take = $Take
         }
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
+        $result = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params
 
         Write-Output $result.Data
     }
@@ -108,10 +101,6 @@ Gets header for a single blob by its unique id
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Get')
@@ -126,8 +115,7 @@ A blob id
 
 .EXAMPLE
 
-# Get blob 123 info from test server
-PS> Get-PipBlob -Name "test" -Id 123
+Get-PipBlob -Id 123
 
 #>
     [CmdletBinding()]
@@ -135,8 +123,6 @@ PS> Get-PipBlob -Name "test" -Id 123
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Put",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -149,7 +135,7 @@ PS> Get-PipBlob -Name "test" -Id 123
     {
         $route = $Uri -f $Id
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route
+        $result = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route
 
         Write-Output $result
     }
@@ -171,10 +157,6 @@ Updates selected blob header fields
 .PARAMETER Connection
 
 A connection object
-
-.PARAMETER Name
-
-A name to refer to the client facade
 
 .PARAMETER Method
 
@@ -206,8 +188,7 @@ A blob expiration time (default: no expiration)
 
 .EXAMPLE
 
-# Updates blob group name and completed flad
-PS> Update-PipBlob -Id 234 -Group test -Completed $false
+Update-PipBlob -Id 234 -Group test -Completed $false
 
 #>
     [CmdletBinding()]
@@ -215,8 +196,6 @@ PS> Update-PipBlob -Id 234 -Group test -Completed $false
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Put",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -235,7 +214,7 @@ PS> Update-PipBlob -Id 234 -Group test -Completed $false
     begin {}
     process 
     {
-        $info = Get-PipBlob -Connection $Connection -Name $Name -Id $Id
+        $info = Get-PipBlob -Connection $Connection -Id $Id
 
         if ($Group -ne "") { $info.group = $Group }
         if ($File -ne "") { $info.name = $File }
@@ -244,7 +223,7 @@ PS> Update-PipBlob -Id 234 -Group test -Completed $false
 
         $route = $Uri -f $Id
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Request $info
+        Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Request $info
     }
     end {}
 }
@@ -265,10 +244,6 @@ Reads content of a blob identified by id
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Get')
@@ -287,8 +262,7 @@ Optional file name to write the blob to
 
 .EXAMPLE
 
-# Read blob to temp123.dat file
-PS> Read-PipBlob -Name "test" -Id "123" -OutFile temp123.dat
+Read-PipBlob -Id "123" -OutFile temp123.dat
 
 #>
     [CmdletBinding()]
@@ -296,8 +270,6 @@ PS> Read-PipBlob -Name "test" -Id "123" -OutFile temp123.dat
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Put",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -311,7 +283,7 @@ PS> Read-PipBlob -Name "test" -Id "123" -OutFile temp123.dat
     process 
     {
         ## Get gateway session
-        $Connection = if ($Connection -eq $null) { Get-PipConnection -Name $Name } else {$Connection}
+        $Connection = if ($Connection -eq $null) { Get-PipConnection  } else {$Connection}
         if ($Connection -eq $null) 
         {
             throw "PipConnection is not defined. Please, use Open-PipConnection or Select-PipConnection"
@@ -348,10 +320,6 @@ Creates a new blob and loads file as its content
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Post')
@@ -378,8 +346,7 @@ A name of the file to read from
 
 .EXAMPLE
 
-# Write a new blob from a local file
-PS> Write-PipBlob -Group test -InFile photo.jpg
+Write-PipBlob -Group test -InFile photo.jpg
 
 #>
     [CmdletBinding()]
@@ -387,8 +354,6 @@ PS> Write-PipBlob -Group test -InFile photo.jpg
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Post",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -412,7 +377,7 @@ PS> Write-PipBlob -Group test -InFile photo.jpg
             expire_time = $Expire
         }
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -InFile $InFile -Params $params
+        Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -InFile $InFile -Params $params
     }
     end {}
 }
@@ -433,10 +398,6 @@ Removes blob identified by id
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Delete')
@@ -451,8 +412,7 @@ A blob id
 
 .EXAMPLE
 
-# Remove blob
-PS> Remove-PipBlob -Name "test" -Id "123"
+Remove-PipBlob -Id "123"
 
 #>
     [CmdletBinding()]
@@ -460,8 +420,6 @@ PS> Remove-PipBlob -Name "test" -Id "123"
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Delete",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -474,7 +432,7 @@ PS> Remove-PipBlob -Name "test" -Id "123"
     {
         $route = $Uri -f $Id
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route
+        Invoke-PipFacade -Connection $Connection -Method $Method -Route $route
     }
     end {}
 }

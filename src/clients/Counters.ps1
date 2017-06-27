@@ -21,10 +21,6 @@ Reads a page of performance counters from counters service that satisfy specifie
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Get')
@@ -55,8 +51,7 @@ Switch to read performance counters as text
 
 .EXAMPLE
 
-# Read top 10 counters containing "Invoice" from test cluster in text format
-PS> Read-PipCounters -Name "test" -Filter @{ search="Invoice" } -Take 10 -AsText
+Read-PipCounters -Filter @{ search="Invoice" } -Take 10 -AsText
 
 #>
     [CmdletBinding()]
@@ -64,8 +59,6 @@ PS> Read-PipCounters -Name "test" -Filter @{ search="Invoice" } -Take 10 -AsText
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Get",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -97,14 +90,14 @@ PS> Read-PipCounters -Name "test" -Filter @{ search="Invoice" } -Take 10 -AsText
         {
             $route += "/text"
 
-            $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params -RawResult $true
+            $result = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params -RawResult $true
 
             $result = $result -split "\r\n"
             Write-Output $result
         }
         else 
         {
-            $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
+            $result = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params
 
             Write-Output $result.Data
         }
@@ -128,10 +121,6 @@ Writes a performance counter into counters service
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Post')
@@ -154,8 +143,7 @@ A counter object with the following structure
 
 .EXAMPLE
 
-# Write counter to test cluster
-PS> Write-PipCount -Name "test" -Counter @{ name="test.total_calls"; type=4; count=1 }
+Write-PipCount -Counter @{ name="test.total_calls"; type=4; count=1 }
 
 #>
     [CmdletBinding()]
@@ -163,8 +151,6 @@ PS> Write-PipCount -Name "test" -Counter @{ name="test.total_calls"; type=4; cou
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [Object] $Counter,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -177,7 +163,7 @@ PS> Write-PipCount -Name "test" -Counter @{ name="test.total_calls"; type=4; cou
     {
         $route = $Uri
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Request $Counter
+        Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Request $Counter
     }
     end {}
 }
@@ -198,10 +184,6 @@ Clears all performance counters on the server
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Delete')
@@ -212,8 +194,7 @@ An operation uri (default: /api/1.0/counters)
 
 .EXAMPLE
 
-# Clear coutners on test cluster
-PS> Clear-PipCounters -Name "test"
+Clear-PipCounters
 
 #>
     [CmdletBinding()]
@@ -221,8 +202,6 @@ PS> Clear-PipCounters -Name "test"
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Delete",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -233,7 +212,7 @@ PS> Clear-PipCounters -Name "test"
     {
         $route = $Uri
 
-        $null = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route
+        $null = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route
     }
     end {}
 }

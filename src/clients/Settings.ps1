@@ -21,10 +21,6 @@ Gets a page of section ids from settings that satisfy specified criteria
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Get')
@@ -51,8 +47,7 @@ A include total count (default: false)
 
 .EXAMPLE
 
-# Get all sections from test cluster
-PS> Get-PipSettingsSections -Name "test"
+Get-PipSettingsSections
 
 #>
     [CmdletBinding()]
@@ -60,8 +55,6 @@ PS> Get-PipSettingsSections -Name "test"
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Get",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -83,7 +76,7 @@ PS> Get-PipSettingsSections -Name "test"
             take = $Take
         }
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
+        $result = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params
 
         Write-Output $result.Data
     }
@@ -106,10 +99,6 @@ Gets requested section
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Get')
@@ -124,8 +113,7 @@ A section id
 
 .EXAMPLE
 
-# Read section with settings for user 123 from test cluster
-PS> Read-PipSettingsSection -Name "test" -Section 123
+Read-PipSettingsSection -Section 123
 
 #>
     [CmdletBinding()]
@@ -133,8 +121,6 @@ PS> Read-PipSettingsSection -Name "test" -Section 123
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Get",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -147,7 +133,7 @@ PS> Read-PipSettingsSection -Name "test" -Section 123
     {
         $route = $Uri -f $Section
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route
+        $result = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route
 
         $hash = ConvertObjectToHashtable($result)
         Write-Output $hash
@@ -171,10 +157,6 @@ Writes a hashtable into specified settings section
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Post')
@@ -193,8 +175,7 @@ A section parameters
 
 .EXAMPLE
 
-# Write settings section for user 123 to test cluster
-PS> Write-PipSettingsSection -Name "test" -Section 123 -Parameters @{ key1=123; key2="ABC" }
+Write-PipSettingsSection -Section 123 -Parameters @{ key1=123; key2="ABC" }
 
 #>
     [CmdletBinding()]
@@ -202,8 +183,6 @@ PS> Write-PipSettingsSection -Name "test" -Section 123 -Parameters @{ key1=123; 
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Post",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -218,7 +197,7 @@ PS> Write-PipSettingsSection -Name "test" -Section 123 -Parameters @{ key1=123; 
     {
         $route = $Uri -f $Section
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Request $Parameters
+        Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Request $Parameters
     }
     end {}
 }
@@ -239,10 +218,6 @@ Reads a single parameter from specified settings section
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Get')
@@ -261,8 +236,7 @@ A parameter key
 
 .EXAMPLE
 
-# Read language parameter for user 123 from test cluster
-PS> Read-PipSettingsParam -Name "test" -Section 123 -Key "language"
+Read-PipSettingsParam -Section 123 -Key "language"
 
 #>
     [CmdletBinding()]
@@ -270,8 +244,6 @@ PS> Read-PipSettingsParam -Name "test" -Section 123 -Key "language"
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Get",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -286,7 +258,7 @@ PS> Read-PipSettingsParam -Name "test" -Section 123 -Key "language"
     {
         $route = $Uri -f $Section, $Key
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route
+        $result = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route
 
         Write-Output $result
     }
@@ -308,10 +280,6 @@ Writes a single parameter into specified settings section
 .PARAMETER Connection
 
 A connection object
-
-.PARAMETER Name
-
-A name to refer to the client facade
 
 .PARAMETER Method
 
@@ -335,8 +303,7 @@ A parameter value
 
 .EXAMPLE
 
-# Set language parameter for user 123 to test cluster
-PS> Write-PipSettingsParam -Name "test" -Section 123 -Key language -Value en
+Write-PipSettingsParam -Section 123 -Key language -Value en
 
 #>
     [CmdletBinding()]
@@ -344,8 +311,6 @@ PS> Write-PipSettingsParam -Name "test" -Section 123 -Key language -Value en
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Post",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -365,7 +330,7 @@ PS> Write-PipSettingsParam -Name "test" -Section 123 -Key language -Value en
             value = $Value
         }
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
+        Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params
     }
     end {}
 }
@@ -385,10 +350,6 @@ Increments a single parameter by specified count
 .PARAMETER Connection
 
 A connection object
-
-.PARAMETER Name
-
-A name to refer to the client facade
 
 .PARAMETER Method
 
@@ -412,8 +373,7 @@ An increment count
 
 .EXAMPLE
 
-# Increment attempt parameter for user 123 to test cluster
-PS> Add-PipSettingsParam -Name "test" -Section 123 -Key attempt -Count 1
+Add-PipSettingsParam -Section 123 -Key attempt -Count 1
 
 #>
     [CmdletBinding()]
@@ -421,8 +381,6 @@ PS> Add-PipSettingsParam -Name "test" -Section 123 -Key attempt -Count 1
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Post",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -442,7 +400,7 @@ PS> Add-PipSettingsParam -Name "test" -Section 123 -Key attempt -Count 1
             value = $Value
         }
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
+        Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params
     }
     end {}
 }

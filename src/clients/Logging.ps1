@@ -21,10 +21,6 @@ Reads a page of messages from logging service that satisfy specified criteria
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Get')
@@ -55,8 +51,7 @@ Switch to read log messages as text
 
 .EXAMPLE
 
-# Read top 10 log messages containing "Invoice" from test cluster in text format
-PS> Read-PipLog -Name "test" -Filter @{ search="Invoice" } -Take 10 -AsText
+Read-PipLog -Filter @{ search="Invoice" } -Take 10 -AsText
 
 #>
     [CmdletBinding()]
@@ -64,8 +59,6 @@ PS> Read-PipLog -Name "test" -Filter @{ search="Invoice" } -Take 10 -AsText
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Get",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -97,14 +90,14 @@ PS> Read-PipLog -Name "test" -Filter @{ search="Invoice" } -Take 10 -AsText
         {
             $route += "/text"
 
-            $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params -RawResult $true
+            $result = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params -RawResult $true
 
             $result = $result -split "\r\n"
             Write-Output $result
         }
         else 
         {
-            $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
+            $result = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params
 
             Write-Output $result.Data
         }
@@ -127,10 +120,6 @@ Gets a page of error messages from logging service that satisfy specified criter
 .PARAMETER Connection
 
 A connection object
-
-.PARAMETER Name
-
-A name to refer to the client facade
 
 .PARAMETER Method
 
@@ -158,8 +147,7 @@ Switch to read traces as text
 
 .EXAMPLE
 
-# Get top 10 errors containing "Invoice" from test cluster in text format
-PS> Read-PipErrors -Name "test" -Filter @{ search="Invoice" } -Take 10 -AsText
+Read-PipErrors -Filter @{ search="Invoice" } -Take 10 -AsText
 
 #>
     [CmdletBinding()]
@@ -167,8 +155,6 @@ PS> Read-PipErrors -Name "test" -Filter @{ search="Invoice" } -Take 10 -AsText
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Get",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -200,14 +186,14 @@ PS> Read-PipErrors -Name "test" -Filter @{ search="Invoice" } -Take 10 -AsText
         {
             $route += "/text"
 
-            $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params -RawResult $true
+            $result = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params -RawResult $true
 
             $result = $result -split "\r\n"
             Write-Output $result
         }
         else 
         {
-            $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
+            $result = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params
 
             Write-Output $result.Data
         }
@@ -231,10 +217,6 @@ Writes a message into logging service
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Post')
@@ -255,8 +237,7 @@ A message with the following structure
 
 .EXAMPLE
 
-# Write log message to test cluster
-PS> Write-PipLog -Name "test" -Message @{ correlation_id="123"; level=2; source="Powershell" error=@{ message="Failed" }; message="Just a test" }
+Write-PipLog -Message @{ correlation_id="123"; level=2; source="Powershell" error=@{ message="Failed" }; message="Just a test" }
 
 #>
     [CmdletBinding()]
@@ -264,8 +245,6 @@ PS> Write-PipLog -Name "test" -Message @{ correlation_id="123"; level=2; source=
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Post",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -278,7 +257,7 @@ PS> Write-PipLog -Name "test" -Message @{ correlation_id="123"; level=2; source=
     {
         $route = $Uri
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Request $Message
+        Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Request $Message
     }
     end {}
 }
@@ -298,10 +277,6 @@ Clears all log messages including errors on the server
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Delete')
@@ -313,7 +288,7 @@ An operation uri (default: /api/1.0/logging)
 .EXAMPLE
 
 # Clear log on test cluster
-PS> Clear-PipLog -Name "test"
+Clear-PipLog
 
 #>
     [CmdletBinding()]
@@ -321,8 +296,6 @@ PS> Clear-PipLog -Name "test"
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Delete",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -333,7 +306,7 @@ PS> Clear-PipLog -Name "test"
     {
         $route = $Uri
 
-        $null = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route
+        $null = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route
     }
     end {}
 }

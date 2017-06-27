@@ -21,10 +21,6 @@ Gets a page of groups from statistics
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Get')
@@ -47,8 +43,7 @@ A include total count (default: false)
 
 .EXAMPLE
 
-# Get statistic groups from test cluster
-PS> Get-PipStatGroups -Name "test"
+Get-PipStatGroups
 
 #>
     [CmdletBinding()]
@@ -56,8 +51,6 @@ PS> Get-PipStatGroups -Name "test"
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Get",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -77,7 +70,7 @@ PS> Get-PipStatGroups -Name "test"
             take = $Take
         }
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
+        $result = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params
 
         Write-Output $result.Data
     }
@@ -99,10 +92,6 @@ Gets a page of counters from statistics that satisfy specified criteria
 .PARAMETER Connection
 
 A connection object
-
-.PARAMETER Name
-
-A name to refer to the client facade
 
 .PARAMETER Method
 
@@ -126,8 +115,7 @@ A number of records to return (default: 100)
 
 .EXAMPLE
 
-# Get all statistic counters from test cluster
-PS> Get-PipStatCounters -Name "test"
+Get-PipStatCounters
 
 #>
     [CmdletBinding()]
@@ -135,8 +123,6 @@ PS> Get-PipStatCounters -Name "test"
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Get",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -158,7 +144,7 @@ PS> Get-PipStatCounters -Name "test"
             take = $Take
         }
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
+        $result = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params
 
         Write-Output $result.Data
     }
@@ -180,10 +166,6 @@ Gets value set for a counter or group of counterts at specified time horizon fro
 .PARAMETER Connection
 
 A connection object
-
-.PARAMETER Name
-
-A name to refer to the client facade
 
 .PARAMETER Method
 
@@ -215,8 +197,7 @@ An end of the time range
 
 .EXAMPLE
 
-# Get hourly counters for test calls for the last week
-PS> Read-PipStatCounter -Name "test" -Group test -Counter calls -Type "Hour" -From ([DateTime]::UtcNow.AddDays(-7)) -To ([DateTime]::UtcNow)
+Read-PipStatCounter -Group test -Counter calls -Type "Hour" -From ([DateTime]::UtcNow.AddDays(-7)) -To ([DateTime]::UtcNow)
 
 #>
     [CmdletBinding()]
@@ -224,8 +205,6 @@ PS> Read-PipStatCounter -Name "test" -Group test -Counter calls -Type "Hour" -Fr
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, Position, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Get",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -256,7 +235,7 @@ PS> Read-PipStatCounter -Name "test" -Group test -Counter calls -Type "Hour" -Fr
             to_time = $To
         }
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
+        $result = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params
 
         Write-Output $result
     }
@@ -278,10 +257,6 @@ Increments statistics counter by value, updates totals at all different time hor
 .PARAMETER Connection
 
 A connection object
-
-.PARAMETER Name
-
-A name to refer to the client facade
 
 .PARAMETER Method
 
@@ -305,8 +280,7 @@ An increment value (Default: 1)
 
 .EXAMPLE
 
-# Increment test calls counter
-PS> Add-PipStatCounter -Name "test" -Group test -Counter calls -Value 1
+Add-PipStatCounter -Group test -Counter calls -Value 1
 
 #>
     [CmdletBinding()]
@@ -314,8 +288,6 @@ PS> Add-PipStatCounter -Name "test" -Group test -Counter calls -Value 1
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, Position, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Post",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -333,7 +305,7 @@ PS> Add-PipStatCounter -Name "test" -Group test -Counter calls -Value 1
         $route = $Uri -f $Group, $Counter
         $params = @{ value = $Value }
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
+        Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params
     }
     end {}
 }

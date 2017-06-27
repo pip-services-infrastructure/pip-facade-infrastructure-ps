@@ -21,10 +21,6 @@ Gets a page of system evens from event log that satisfy specified criteria
 
 A connection object
 
-.PARAMETER Name
-
-A name to refer to the client facade
-
 .PARAMETER Method
 
 An operation method (default: 'Get')
@@ -51,8 +47,7 @@ A include total count (default: false)
 
 .EXAMPLE
 
-# Get failure events from test cluster
-PS> Get-PipEvents -Name "test" -Filter @{ type="Failure" }
+Get-PipEvents -Filter @{ type="Failure" }
 
 #>
     [CmdletBinding()]
@@ -60,8 +55,6 @@ PS> Get-PipEvents -Name "test" -Filter @{ type="Failure" }
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Get",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -83,7 +76,7 @@ PS> Get-PipEvents -Name "test" -Filter @{ type="Failure" }
             take = $Take
         }
 
-        $result = Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Params $params
+        $result = Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params
 
         Write-Output $result.Data
     }
@@ -105,10 +98,6 @@ Writes a single event into event log
 .PARAMETER Connection
 
 A connection object
-
-.PARAMETER Name
-
-A name to refer to the client facade
 
 .PARAMETER Method
 
@@ -132,8 +121,7 @@ An event to be written:
 
 .EXAMPLE
 
-# Write event to event log on test cluster
-PS> Write-PipEvent -Name "test" -Event @{ correlation_id="123"; type="Other"; message="Just a test event" }
+Write-PipEvent -Event @{ correlation_id="123"; type="Other"; message="Just a test event" }
 
 #>
     [CmdletBinding()]
@@ -141,8 +129,6 @@ PS> Write-PipEvent -Name "test" -Event @{ correlation_id="123"; type="Other"; me
     (
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Connection,
-        [Parameter(Mandatory=$false, Position = 0, ValueFromPipelineByPropertyName=$true)]
-        [string] $Name,
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Post",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
@@ -155,7 +141,7 @@ PS> Write-PipEvent -Name "test" -Event @{ correlation_id="123"; type="Other"; me
     {
         $route = $Uri
 
-        Invoke-PipFacade -Connection $Connection -Name $Name -Method $Method -Route $route -Request $Event
+        Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Request $Event
     }
     end {}
 }
