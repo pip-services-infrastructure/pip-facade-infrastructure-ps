@@ -1,21 +1,21 @@
 ﻿########################################################
 ##
-## Registry.ps1
+## Settings.ps1
 ## Client facade to infrastructure Pip.Services
-## Registry commands
+## Settings commands
 ##
 #######################################################
 
-function Get-PipRegistrySections
+function Get-PipSettingsSections
 {
 <#
 .SYNOPSIS
 
-Get section ids from registry
+Get section ids from settings
 
 .DESCRIPTION
 
-Gets a page of section ids from registry that satisfy specified criteria
+Gets a page of section ids from settings that satisfy specified criteria
 
 .PARAMETER Connection
 
@@ -31,7 +31,7 @@ An operation method (default: 'Get')
 
 .PARAMETER Uri
 
-An operation uri (default: /api/1.0/registry/ids)
+An operation uri (default: /api/1.0/settings/ids)
 
 .PARAMETER Filter
 
@@ -52,7 +52,7 @@ A include total count (default: false)
 .EXAMPLE
 
 # Get all sections from test cluster
-PS> Get-PipRegistrySections -Name "test"
+PS> Get-PipSettingsSections -Name "test"
 
 #>
     [CmdletBinding()]
@@ -65,7 +65,7 @@ PS> Get-PipRegistrySections -Name "test"
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Get",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Uri = "/api/1.0/registry/ids",
+        [string] $Uri = "/api/1.0/settings/ids",
         [Parameter(Mandatory=$false, Position = 0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [Hashtable] $Filter = @{},
         [Parameter(Mandatory=$false, Position = 1, ValueFromPipelineByPropertyName=$true)]
@@ -91,12 +91,12 @@ PS> Get-PipRegistrySections -Name "test"
 }
 
 
-function Read-PipRegistrySection
+function Read-PipSettingsSection
 {
 <#
 .SYNOPSIS
 
-Reads section from registry specified by its id
+Reads section from settings specified by its id
 
 .DESCRIPTION
 
@@ -116,7 +116,7 @@ An operation method (default: 'Get')
 
 .PARAMETER Uri
 
-An operation uri (default: /api/1.0/registry/{0})
+An operation uri (default: /api/1.0/settings/{0})
 
 .PARAMETER Section
 
@@ -125,7 +125,7 @@ A section id
 .EXAMPLE
 
 # Read section with settings for user 123 from test cluster
-PS> Read-PipRegistrySection -Name "test" -Section 123
+PS> Read-PipSettingsSection -Name "test" -Section 123
 
 #>
     [CmdletBinding()]
@@ -138,7 +138,7 @@ PS> Read-PipRegistrySection -Name "test" -Section 123
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Get",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Uri = "/api/1.0/registry/{0}",
+        [string] $Uri = "/api/1.0/settings/{0}",
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [string] $Section
     )
@@ -156,16 +156,16 @@ PS> Read-PipRegistrySection -Name "test" -Section 123
 }
 
 
-function Write-PipRegistrySection
+function Write-PipSettingsSection
 {
 <#
 .SYNOPSIS
 
-Writes registry section specified by its is
+Writes settings section specified by its is
 
 .DESCRIPTION
 
-Writes a hashtable into specified registry section
+Writes a hashtable into specified settings section
 
 .PARAMETER Connection
 
@@ -181,7 +181,7 @@ An operation method (default: 'Post')
 
 .PARAMETER Uri
 
-An operation uri (default: /api/1.0/registry/{0})
+An operation uri (default: /api/1.0/settings/{0})
 
 .PARAMETER Section
 
@@ -194,7 +194,7 @@ A section parameters
 .EXAMPLE
 
 # Write settings section for user 123 to test cluster
-PS> Write-PipRegistrySection -Name "test" -Section 123 -Parameters @{ key1=123; key2="ABC" }
+PS> Write-PipSettingsSection -Name "test" -Section 123 -Parameters @{ key1=123; key2="ABC" }
 
 #>
     [CmdletBinding()]
@@ -207,7 +207,7 @@ PS> Write-PipRegistrySection -Name "test" -Section 123 -Parameters @{ key1=123; 
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Post",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Uri = "/api/1.0/registry/{0}",
+        [string] $Uri = "/api/1.0/settings/{0}",
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipelineByPropertyName=$true)]
         [string] $Section,
         [Parameter(Mandatory=$true, Position = 1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -224,16 +224,16 @@ PS> Write-PipRegistrySection -Name "test" -Section 123 -Parameters @{ key1=123; 
 }
 
 
-function Read-PipRegistryParam
+function Read-PipSettingsParam
 {
 <#
 .SYNOPSIS
 
-Reads parameter from registry section
+Reads parameter from settings section
 
 .DESCRIPTION
 
-Reads a single parameter from specified registry section
+Reads a single parameter from specified settings section
 
 .PARAMETER Connection
 
@@ -249,7 +249,7 @@ An operation method (default: 'Get')
 
 .PARAMETER Uri
 
-An operation uri (default: /api/1.0/registry/{0}/{1})
+An operation uri (default: /api/1.0/settings/{0}/{1})
 
 .PARAMETER Section
 
@@ -262,7 +262,7 @@ A parameter key
 .EXAMPLE
 
 # Read language parameter for user 123 from test cluster
-PS> Read-PipRegistryParam -Name "test" -Section 123 -Key "language"
+PS> Read-PipSettingsParam -Name "test" -Section 123 -Key "language"
 
 #>
     [CmdletBinding()]
@@ -275,7 +275,7 @@ PS> Read-PipRegistryParam -Name "test" -Section 123 -Key "language"
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Get",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Uri = "/api/1.0/registry/{0}/{1}",
+        [string] $Uri = "/api/1.0/settings/{0}/{1}",
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipelineByPropertyName=$true)]
         [string] $Section,
         [Parameter(Mandatory=$true, Position = 1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -294,16 +294,16 @@ PS> Read-PipRegistryParam -Name "test" -Section 123 -Key "language"
 }
 
 
-function Write-PipRegistryParam
+function Write-PipSettingsParam
 {
 <#
 .SYNOPSIS
 
-Writes registry parameter 
+Writes settings parameter 
 
 .DESCRIPTION
 
-Writes a single parameter into specified registry section
+Writes a single parameter into specified settings section
 
 .PARAMETER Connection
 
@@ -319,7 +319,7 @@ An operation method (default: 'Post')
 
 .PARAMETER Uri
 
-An operation uri (default: /api/1.0/registry/{0}/{1})
+An operation uri (default: /api/1.0/settings/{0}/{1})
 
 .PARAMETER Section
 
@@ -336,7 +336,7 @@ A parameter value
 .EXAMPLE
 
 # Set language parameter for user 123 to test cluster
-PS> Write-PipRegistryParam -Name "test" -Section 123 -Key language -Value en
+PS> Write-PipSettingsParam -Name "test" -Section 123 -Key language -Value en
 
 #>
     [CmdletBinding()]
@@ -349,7 +349,7 @@ PS> Write-PipRegistryParam -Name "test" -Section 123 -Key language -Value en
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Post",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Uri = "/api/1.0/registry/{0}/{1}",
+        [string] $Uri = "/api/1.0/settings/{0}/{1}",
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipelineByPropertyName=$true)]
         [string] $Section,
         [Parameter(Mandatory=$true, Position = 1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -371,12 +371,12 @@ PS> Write-PipRegistryParam -Name "test" -Section 123 -Key language -Value en
 }
 
 
-function Add-PipRegistryParam
+function Add-PipSettingsParam
 {
 <#
 .SYNOPSIS
 
-Increment registry parameter 
+Increment settings parameter 
 
 .DESCRIPTION
 
@@ -396,7 +396,7 @@ An operation method (default: 'Post')
 
 .PARAMETER Uri
 
-An operation uri (default: /api/1.0/registry/{0}/{1}/increment)
+An operation uri (default: /api/1.0/settings/{0}/{1}/increment)
 
 .PARAMETER Section
 
@@ -413,7 +413,7 @@ An increment count
 .EXAMPLE
 
 # Increment attempt parameter for user 123 to test cluster
-PS> Add-PipRegistryParam -Name "test" -Section 123 -Key attempt -Count 1
+PS> Add-PipSettingsParam -Name "test" -Section 123 -Key attempt -Count 1
 
 #>
     [CmdletBinding()]
@@ -426,7 +426,7 @@ PS> Add-PipRegistryParam -Name "test" -Section 123 -Key attempt -Count 1
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
         [string] $Method = "Post",
         [Parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
-        [string] $Uri = "/api/1.0/registry/{0}/{1}/increment",
+        [string] $Uri = "/api/1.0/settings/{0}/{1}/increment",
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipelineByPropertyName=$true)]
         [string] $Section,
         [Parameter(Mandatory=$true, Position = 1, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
