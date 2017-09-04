@@ -274,6 +274,10 @@ A counter group
 
 A counter name
 
+.PARAMETER Time
+
+An increment time (Default: current time)
+
 .PARAMETER Value
 
 An increment value (Default: 1)
@@ -297,13 +301,18 @@ Add-PipStatCounter -Group test -Counter calls -Value 1
         [Parameter(Mandatory=$true, Position = 0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [string] $Counter,
         [Parameter(Mandatory=$false, Position = 1, ValueFromPipelineByPropertyName=$true)]
+        [DateTime] $Time = $null,
+        [Parameter(Mandatory=$false, Position = 2, ValueFromPipelineByPropertyName=$true)]
         [long] $Value = 1
     )
     begin {}
     process 
     {
         $route = $Uri -f $Group, $Counter
-        $params = @{ value = $Value }
+        $params = @{
+            time = $Time;
+            value = $Value 
+        }
 
         Invoke-PipFacade -Connection $Connection -Method $Method -Route $route -Params $params
     }
