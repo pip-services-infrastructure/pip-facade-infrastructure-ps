@@ -278,6 +278,10 @@ A counter name
 
 An increment time (Default: current time)
 
+.PARAMETER Timezone
+
+A timezone to calculate stats (Default: UTC)
+
 .PARAMETER Value
 
 An increment value (Default: 1)
