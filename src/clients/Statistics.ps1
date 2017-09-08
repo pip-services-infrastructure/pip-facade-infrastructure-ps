@@ -303,6 +303,8 @@ Add-PipStatCounter -Group test -Counter calls -Value 1
         [Parameter(Mandatory=$false, Position = 1, ValueFromPipelineByPropertyName=$true)]
         [DateTime] $Time = $null,
         [Parameter(Mandatory=$false, Position = 2, ValueFromPipelineByPropertyName=$true)]
+        [string] $Timezone = $null,
+        [Parameter(Mandatory=$false, Position = 3, ValueFromPipelineByPropertyName=$true)]
         [long] $Value = 1
     )
     begin {}
@@ -311,6 +313,7 @@ Add-PipStatCounter -Group test -Counter calls -Value 1
         $route = $Uri -f $Group, $Counter
         $params = @{
             time = $Time;
+            timezone = $Timezone;
             value = $Value 
         }
 
